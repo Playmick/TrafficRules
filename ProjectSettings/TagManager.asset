@@ -9,6 +9,7 @@ TagManager:
   - PeopleSemaphore
   - Zone
   - Bicycle
+  - CyclePoint
   layers:
   - Default
   - TransparentFX
