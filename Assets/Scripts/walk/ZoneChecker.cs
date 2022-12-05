@@ -9,12 +9,10 @@ public class ZoneChecker : MonoBehaviour
     {
         if (other.gameObject.tag == "Zone")
         {
+            //Debug.Log("Zone checker заметил зону");
             ZoneColor zone = other.gameObject.GetComponent<ZoneColor>();
 
-            if (zone.watcher.semaphore.PEOPLE_CAN && zone.mainZone.playerStayInZone)
-            {
-                zone.PlayerLookedToThis = true;
-            }
+            zone.PlayerLookedToThis = true;
         }
             
     }

@@ -1,69 +1,125 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Watcher : MonoBehaviour
 {
-
-    // лист объектов
+    // лист направлений(их всего 2)
+    // в каждом направлении 2 стороны чтобы посмотреть налево и направо
     public Direction[] directions;
 
-    
-    public Material _correctMat;
-    public Material _inCorrectMat;
-    public SemaphorePeople semaphore;
-    [SerializeField] private GameObject crosswalk;
+    protected DI di;
 
-    private void Awake()
+    public SemaphorePeople semaphore;
+    [SerializeField] protected GameObject ColorBoxCrosswalk;
+    [SerializeField] protected GameObject dieZone;
+
+    protected virtual void Awake()
     {
         semaphore.ChangeLightColor += ResetWatcher;
+
+        CheckAllRight();
     }
 
-    public void CheckWatcher()
+    protected virtual void Start()
     {
-        if (crosswalk == null)
-            Debug.Log("Прокинь сюда ссылку на crosswalk");
+        di = DI.instance;
+        foreach (Direction dir in directions)
+        {
+            foreach (ZoneColor zc in dir.playerLooked)
+            {
+                zc.OnPlayerLookedToThis += CheckWatcher;
+            }
+        }
+    }
+
+    //выполнялся когда игрок посмотрел на него
+    //нужно подписать событием
+    public virtual void CheckWatcher()
+    {
+        if(ManLookedAround())
+        {
+            ColorBoxCrosswalk.GetComponent<MeshRenderer>().material = di._correctMat;
+            dieZone.SetActive(false);
+        }
+    }
+
+    private void CheckAllRight()
+    {
+        if (ColorBoxCrosswalk == null)
+            Debug.Log("Прокинь сюда ссылку на ColorBoxCrosswalk");
 
         if (directions.Length <= 1)
             Debug.Log("Заполни массив directions в Watcher, помести туда зоны в которые должен посмотреть игрок.");
 
-        if(semaphore == null)
+        if (semaphore == null)
             Debug.Log("Прокинь сюда ссылку на semaphore");
+    }
 
+    protected virtual bool ManLookedAround()
+    {
         foreach (Direction dir in directions)
         {
             if (dir.mainZone.playerStayInZone)
             {
                 //если игрок стоит в зоне
-                if (semaphore.PEOPLE_CAN == false)
-                    return;
+                if (OtherPeopleCanGo() == false)
+                    return false;
 
                 foreach (ZoneColor zc in dir.playerLooked)
                 {
                     if (zc.PlayerLookedToThis == false)
-                        return;
+                        return false;
                 }
+                return true;
             }
         }
+        return false;
+    }
 
-        crosswalk.GetComponent<MeshRenderer>().material = _correctMat;
+    protected virtual bool OtherPeopleCanGo()
+    {
+        return semaphore.PEOPLE_CAN;
     }
 
     public void ResetWatcher()
     {
-        if(semaphore.PEOPLE_CAN == false)
+        if (OtherPeopleCanGo())
         {
-            //все зоны во всех массивах направления сделать красным
-            foreach (Direction dir in directions)
-            {
-                foreach (ZoneColor zc in dir.playerLooked)
-                {
-                    zc.PlayerLookedToThis = false;
-                }
-            }
-
-            crosswalk.GetComponent<MeshRenderer>().material = _inCorrectMat;
+            di.tooltip.ChangeTooltipText("Перед переходом через переход обязательно нужно посмотреть по сторонам.");
         }
-        
+        if (OtherPeopleCanGo() == false)
+        {
+            ResetZones();
+            SemaphoreWarningOn();
+        }
+
+    }
+
+    protected virtual void SemaphoreWarningOn()
+    {
+        di.tooltip.ChangeTooltipText("Нельзя выходить на дорогу, нарушая правила дорожного движения.");
+        StartCoroutine(OnDieZone());
+    }
+
+    private void ResetZones()
+    {
+        //все зоны во всех массивах направления сделать красным
+        foreach (Direction dir in directions)
+        {
+            foreach (ZoneColor zc in dir.playerLooked)
+            {
+                zc.PlayerLookedToThis = false;
+            }
+        }
+
+        ColorBoxCrosswalk.GetComponent<MeshRenderer>().material = di._inCorrectMat;
+    }
+
+    IEnumerator OnDieZone()
+    {
+        yield return new WaitForSeconds(3f);
+        dieZone.SetActive(true);
     }
 }
 

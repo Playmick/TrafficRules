@@ -6,29 +6,40 @@ using UnityEngine;
 public class SimpleCrosswalk : MonoBehaviour
 {
     private bool havePeople;
-    public event EventHandler ChangeStatus;
+    public Action ChangeStatus;
 
-    public bool HavePeople
+    public int HavePeople { get; set; }
+
+    private void Start()
     {
-        get
-        {
-            return havePeople;
-        }
-        set
-        {
-            havePeople = value;
-            ChangeStatus?.Invoke(this, null);
-        }
+        HavePeople = 0;
+        transform.gameObject.tag = "Untagged";
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
-            HavePeople = true;
+        if (other.CompareTag("Player") || other.CompareTag("People"))
+        {
+            if (HavePeople==0)
+                ChangeStatus?.Invoke();
+
+            HavePeople++;
+            transform.gameObject.tag = "Player";
+            //просто потому что на плеера автомобили останавливаются
+        }
     }
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
-            HavePeople = false;
+        if (other.CompareTag("Player") || other.CompareTag("People"))
+        {
+            HavePeople--;
+            if(HavePeople<=0)
+            {
+                transform.gameObject.tag = "Untagged";
+                HavePeople = 0;
+                ChangeStatus?.Invoke();
+            }
+                
+        }
     }
 }

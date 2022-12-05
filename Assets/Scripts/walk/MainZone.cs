@@ -10,6 +10,7 @@ public class MainZone : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            //Debug.Log("Игрок в главной зоне");
             playerStayInZone = true;
             //подсветить красным зону перехода
         }

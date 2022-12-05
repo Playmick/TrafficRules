@@ -2169,7 +2169,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4689514261546963760}
   m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -1.9212693, y: -0.25, z: -60.6}
+  m_LocalPosition: {x: -1.9212693, y: -0.2, z: -60.77}
   m_LocalScale: {x: 17.767899, y: 17.767899, z: 17.767899}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -33944,6 +33944,7 @@ GameObject:
   - component: {fileID: 6629651833232162213}
   - component: {fileID: 6629651833233456517}
   - component: {fileID: 6629651833234455109}
+  - component: {fileID: 7849190366594698778}
   m_Layer: 0
   m_Name: Building H003
   m_TagString: Untagged
@@ -34016,6 +34017,19 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &7849190366594698778
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6629651833232451973}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 5.7198176, y: 6.767216, z: 6.938602}
+  m_Center: {x: 0.3091755, y: 0.24220061, z: 3.3956182}
 --- !u!1 &6629651833232451975
 GameObject:
   m_ObjectHideFlags: 0
