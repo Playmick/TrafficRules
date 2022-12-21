@@ -17,6 +17,7 @@ public class WatchCross : Watcher
     protected override void Start()
     {
         base.Start();
+        di = DI.instance;
         di.tooltip.ChangeTooltipText("Перед переходом через переход обязательно нужно посмотреть по сторонам.");
     }
 

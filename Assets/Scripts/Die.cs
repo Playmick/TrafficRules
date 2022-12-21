@@ -5,7 +5,7 @@ using UnityEngine;
 public class Die : MonoBehaviour
 {
     protected DI di;
-    [SerializeField] bool defaultText;
+    //[SerializeField] bool defaultText;
 
     bool tablNotSubscribe;
     void Start()
@@ -18,10 +18,18 @@ public class Die : MonoBehaviour
     {
         if(other.CompareTag("Player"))
         {
+            /*
             //сменить текст на табличке
             if(defaultText)
                 di.tooltip.ChangeTooltipText("Нельзя выходить на дорогу, нарушая правила дорожного движения.");
+            */
+
             di.tooltip.UpdateCloseText();
+
+            //"вспышка"
+            di.blackColor.SetActive(true);
+            di.flashBlindness.SetActive(true);
+
             //включить табличку
             di.tooltip.ShowTip();
 

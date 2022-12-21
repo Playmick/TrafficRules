@@ -87,6 +87,7 @@ public class PeopleWalkPath : WalkPath
         var passersby = people.AddComponent<Passersby>();
 
         people.layer = 0;
+        people.tag = "People";
 
         movePath.randXFinish = Random.Range(-randXPos, randXPos);
         movePath.randZFinish = Random.Range(-randZPos, randZPos);
@@ -261,6 +262,7 @@ public class PeopleWalkPath : WalkPath
                 var passersby = people.AddComponent<Passersby>();
 
                 people.layer = 0;
+                people.tag = "People";
 
                 movePath.randXFinish = XPos;
                 movePath.randZFinish = ZPos;

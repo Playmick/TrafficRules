@@ -98,7 +98,7 @@ public class Watcher : MonoBehaviour
 
     protected virtual void SemaphoreWarningOn()
     {
-        di.tooltip.ChangeTooltipText("Нельзя выходить на дорогу, нарушая правила дорожного движения.");
+        di.tooltip.ChangeTooltipText("Вы перешли на красный сигнал светофора!");
         StartCoroutine(OnDieZone());
     }
 
