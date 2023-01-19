@@ -6,8 +6,7 @@ using UnityEngine.UI;
 
 public class Victorine : MonoBehaviour
 {
-    private DI di;
-
+    [SerializeField] bool TurnOnInStart;
     //массив вопросов
     public Question[] Questions;
 
@@ -16,10 +15,12 @@ public class Victorine : MonoBehaviour
     [SerializeField]private Color greenColor;
     [SerializeField]private Color redColor;
 
+    private DI di;
     private int CountAlreadyReplyAnswers = 0;
 
     private void Start()
     {
+        di = DI.instance;
         //выключить все канвасы
         //выключить все надписи закрытия
 
@@ -36,11 +37,36 @@ public class Victorine : MonoBehaviour
         {
             Debug.Log("Заполни массив Questions");
         }
+
+        if (TurnOnInStart)
+        {
+            Activate();
+        }
     }
 
     public void Activate()
     {
         Questions[CurrentQuestion].Canvas.enabled = true;
+        Questions[CurrentQuestion].Time = 3;
+
+        //тут нужно создать поле которое если нулл то ниче не делаем, а если не нулл то
+        //через интерфейс выполнить метод "Активация возможности взаимодействия/нажатия"
+        //но времени нет, поэтому создаём жёсткую связь
+        //либо наследника викторины чтобы в этом проекте использовать расширив изначальный класс
+        di.RightRay.SetActive(true);
+        di.LeftRay.SetActive(true);
+    }
+
+    public void Deactivate()
+    {
+        Questions[CurrentQuestion].Canvas.enabled = false;
+
+        //тут нужно создать поле которое если нулл то ниче не делаем, а если не нулл то
+        //через интерфейс выполнить метод "Активация возможности взаимодействия/нажатия"
+        //но времени нет, поэтому создаём жёсткую связь
+        //либо наследника викторины чтобы в этом проекте использовать расширив изначальный класс
+        di.RightRay.SetActive(false);
+        di.LeftRay.SetActive(false);
     }
 
     //забиндить все кнопки
@@ -93,7 +119,16 @@ public class Victorine : MonoBehaviour
         {
             //подсветить выбранную кнопку нужным цветом
             if (_answer.IsRight)
+            {
                 _answer.Button.image.color = greenColor;
+
+                //тут опять же стоило подумать над архитектурой, но сроки горят
+                di.tooltip.ChangeImage(di.Svet1);
+                di.tooltip.ChangeTooltipText("Ура! Вы получаете светоотражающий брелок!");
+                di.tooltip.UpdateCloseText();
+                //включить табличку
+                di.tooltip.ShowTip();
+            }
             else
                 _answer.Button.image.color = redColor;
 
@@ -102,8 +137,11 @@ public class Victorine : MonoBehaviour
         
         if(CountAlreadyReplyAnswers >= Questions[CurrentQuestion].CountRightAnswers)
         {
+            
+
             //включить надпись зажмите курок на 3 сек
             Questions[CurrentQuestion].UpdateCloseText();
+            Questions[CurrentQuestion].ResetTime();
 
             //уменьшение времени
             di.holdThreeSeconds.ReduceTime += Questions[CurrentQuestion].ReduceTime;
@@ -123,16 +161,15 @@ public class Victorine : MonoBehaviour
         di.holdThreeSeconds.ResetTime -= Questions[CurrentQuestion].ResetTime;
 
         //закрыли текущий канвас
-        Questions[CurrentQuestion].Canvas.enabled = false;
+        Deactivate();
 
         //если текущий канвас последний
         //то ничё не делаем
 
         //если текущий канвас не последний то включаем следующий
-
         CurrentQuestion++;
         if (CurrentQuestion < Questions.Length)
-            Questions[CurrentQuestion].Canvas.enabled = true;
+            Activate();
     }
 
     
@@ -155,6 +192,10 @@ public class Question
     public Answer[] Answers;
 
     public Action NextQuestion;
+
+    public int Time;
+
+    private int countRightAnswers = 0;
 
     //сколько должно быть верных ответов?
     public int CountRightAnswers
@@ -185,25 +226,22 @@ public class Question
     }
     public void UpdateCloseText()
     {
-        CloseText.text = $"Удерживайте курок контроллера {time} секунды для выхода из сценария";
+        CloseText.text = $"Удерживайте курок контроллера {Time} секунды для перехода далее.";
     }
 
     public void ReduceTime()
     {
-        time = time - 1;
+        Time = Time - 1;
         UpdateCloseText();
-        if (time <= 0)
+        if (Time <= 0)
             NextQuestion?.Invoke();
     }
 
     public void ResetTime()
     {
-        time = 3;
+        Time = 3;
         UpdateCloseText();
     }
-
-    private int countRightAnswers = 0;
-    private int time;
 
 }
 

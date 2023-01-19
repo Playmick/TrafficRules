@@ -14,6 +14,10 @@ public class HoldThreeSeconds : MonoBehaviour
 
     private int time;
 
+    //private bool hold;
+
+    private IEnumerator routine;
+
     private void Awake()
     {
         activateButton.action.performed += HoldActivate;
@@ -22,7 +26,10 @@ public class HoldThreeSeconds : MonoBehaviour
     private void HoldActivate(InputAction.CallbackContext obj)
     {
         //Debug.Log("Начал удерживать");
-        StartCoroutine(HoldOn());
+        //hold = true;
+        routine = HoldOn();
+        StartCoroutine(routine);
+            
     }
 
     IEnumerator HoldOn()
@@ -37,7 +44,8 @@ public class HoldThreeSeconds : MonoBehaviour
 
     private void HoldCanceled(InputAction.CallbackContext obj)
     {
-        StopCoroutine(HoldOn());
+        //hold = false;
+        StopCoroutine(routine);
         ResetTime?.Invoke();
     }
 
