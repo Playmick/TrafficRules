@@ -14,7 +14,8 @@ public static class MacChecker
     static string sceneMenu = "MainMenu";
     private static string[] Macs =//Писать через черточки, с любым регистром
     {
-            "04-D9-F5-7C-5D-3D"
+            "04-D9-F5-7C-5D-3D",
+            "80-F3-EF-E6-59-8B"
     };
 
     public static string CurrentMacAdd()
@@ -47,7 +48,7 @@ public static class MacChecker
             canStart = StrCHecker(mac) || canStart;
         }
 
-        //if (!canStart)
+        if (!canStart)
             SceneManager.LoadScene(sceneName);
 
         return canStart;

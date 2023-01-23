@@ -25,12 +25,13 @@ public class Die : MonoBehaviour
                 di.tooltip.ChangeTooltipText("Нельзя выходить на дорогу, нарушая правила дорожного движения.");
             */
 
-            di.tooltip.UpdateCloseText();
-
             //"вспышка"
             di.blackColor.SetActive(true);
             di.flashBlindness.SetActive(true);
 
+            di.tooltip.ChangeTooltipText("Переход не безопасен. Ознакомьтесь с ПДД 4.5");
+            di.tooltip.CloseImage();
+            di.tooltip.UpdateCloseText();
             //включить табличку
             di.tooltip.ShowTip();
 

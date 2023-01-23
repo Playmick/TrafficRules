@@ -28,6 +28,7 @@ public class Tooltip : MonoBehaviour
     }
     public void ShowTip()
     {
+        ResetTime();
         tipGameObject.SetActive(true);
         di.holdThreeSeconds.ReduceTime += di.tooltip.ReduceTime;
         di.holdThreeSeconds.ResetTime += di.tooltip.ResetTime;
@@ -58,6 +59,11 @@ public class Tooltip : MonoBehaviour
     public void UpdateCloseText()
     {
         closeText.text = $"Удерживайте курок контроллера {time} секунды для выхода из сценария";
+    }
+
+    public void CloseImage()
+    {
+        Image.enabled = false;
     }
 
     public void ChangeImage(Sprite _sprite)
