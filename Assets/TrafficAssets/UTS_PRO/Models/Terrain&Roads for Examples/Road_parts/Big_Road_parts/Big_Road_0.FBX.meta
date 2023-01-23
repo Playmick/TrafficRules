@@ -1,70 +1,66 @@
 fileFormatVersion: 2
 guid: 3d5c2b00f077e334cb8bb4f6f6eea057
-timeCreated: 1450564751
-licenseType: Store
 ModelImporter:
-  serializedVersion: 21
+  serializedVersion: 23
   fileIDToRecycleName:
     100000: //RootNode
-    100002: Big_Road_0
-    100004: City004
-    100006: City005
-    100008: City006
-    100010: City009
-    100012: City010
-    100014: City011
-    100016: City012
-    100018: City013
-    100020: City014
-    100022: City015
-    100024: City016
-    100026: City3
-    100028: Big_Road_0 1
+    100002: City004
+    100004: City005
+    100006: City006
+    100008: City009
+    100010: City010
+    100012: City011
+    100014: City012
+    100016: City013
+    100018: City014
+    100020: City015
+    100022: City016
+    100024: City3
     400000: //RootNode
-    400002: Big_Road_0
-    400004: City004
-    400006: City005
-    400008: City006
-    400010: City009
-    400012: City010
-    400014: City011
-    400016: City012
-    400018: City013
-    400020: City014
-    400022: City015
-    400024: City016
-    400026: City3
-    400028: Big_Road_0 1
+    400002: City004
+    400004: City005
+    400006: City006
+    400008: City009
+    400010: City010
+    400012: City011
+    400014: City012
+    400016: City013
+    400018: City014
+    400020: City015
+    400022: City016
+    400024: City3
+    2100000: bardur2
+    2100002: road3
+    2100004: road2
+    2100006: Concrete1
+    2100008: City3
+    2100010: light
     2300000: //RootNode
-    2300002: Big_Road_0
-    2300004: City004
-    2300006: City005
-    2300008: City006
-    2300010: City009
-    2300012: City010
-    2300014: City011
-    2300016: City012
-    2300018: City013
-    2300020: City014
-    2300022: City015
-    2300024: City016
-    2300026: City3
-    2300028: Big_Road_0 1
+    2300002: City004
+    2300004: City005
+    2300006: City006
+    2300008: City009
+    2300010: City010
+    2300012: City011
+    2300014: City012
+    2300016: City013
+    2300018: City014
+    2300020: City015
+    2300022: City016
+    2300024: City3
     3300000: //RootNode
-    3300002: Big_Road_0
-    3300004: City004
-    3300006: City005
-    3300008: City006
-    3300010: City009
-    3300012: City010
-    3300014: City011
-    3300016: City012
-    3300018: City013
-    3300020: City014
-    3300022: City015
-    3300024: City016
-    3300026: City3
-    3300028: Big_Road_0 1
+    3300002: City004
+    3300004: City005
+    3300006: City006
+    3300008: City009
+    3300010: City010
+    3300012: City011
+    3300014: City012
+    3300016: City013
+    3300018: City014
+    3300020: City015
+    3300022: City016
+    3300024: City3
     4300000: Big_Road_0
     4300002: City3
     4300004: City004
@@ -78,7 +74,7 @@ ModelImporter:
     4300020: City014
     4300022: City015
     4300024: City016
-    6400000: Big_Road_0 1
+    6400000: //RootNode
     6400002: City004
     6400004: City005
     6400006: City006
@@ -91,10 +87,12 @@ ModelImporter:
     6400020: City015
     6400022: City016
     6400024: City3
+  externalObjects: {}
   materials:
     importMaterials: 1
     materialName: 0
     materialSearch: 1
+    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -107,6 +105,8 @@ ModelImporter:
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
     animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
@@ -121,26 +121,34 @@ ModelImporter:
     globalScale: 1
     meshCompression: 0
     addColliders: 1
-    importVisibility: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
     importBlendShapes: 1
-    importCameras: 0
-    importLights: 0
+    importCameras: 1
+    importLights: 1
     swapUVChannels: 0
-    generateSecondaryUV: 1
+    generateSecondaryUV: 0
     useFileUnits: 1
     optimizeMeshForGPU: 1
-    keepQuads: 1
+    keepQuads: 0
     weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
     useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
     tangentImportMode: 3
-    normalCalculationMode: 0
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
@@ -155,10 +163,9 @@ ModelImporter:
     legStretch: 0.05
     feetSpacing: 0
     rootMotionBoneName: 
-    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
     hasExtraRoot: 0
-    skeletonHasParents: 0
+    skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 0
   humanoidOversampling: 1
