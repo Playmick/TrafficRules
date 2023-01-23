@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class Victorine : MonoBehaviour
@@ -23,8 +24,7 @@ public class Victorine : MonoBehaviour
         di = DI.instance;
         //выключить все канвасы
         //выключить все надписи закрытия
-
-        //тут скорее всего нужно проверять не на нул, а на кол-во элементов
+        
         if (Questions.Length > 0)
         {
             foreach (Question q in Questions)
@@ -122,15 +122,23 @@ public class Victorine : MonoBehaviour
             {
                 _answer.Button.image.color = greenColor;
 
+                /*
                 //тут опять же стоило подумать над архитектурой, но сроки горят
                 di.tooltip.ChangeImage(di.Svet1);
                 di.tooltip.ChangeTooltipText("Ура! Вы получаете светоотражающий брелок!");
                 di.tooltip.UpdateCloseText();
+                
                 //включить табличку
-                di.tooltip.ShowTip();
+                di.tooltip.ShowTip();*/
+
+                Questions[CurrentQuestion].AfterRightAnswer?.Invoke();
             }
             else
+            {
                 _answer.Button.image.color = redColor;
+                Questions[CurrentQuestion].AfterWrongAnswer?.Invoke();
+            }
+                
 
             CountAlreadyReplyAnswers++;
         }
@@ -192,6 +200,8 @@ public class Question
     public Answer[] Answers;
 
     public Action NextQuestion;
+    public UnityAction AfterRightAnswer;
+    public UnityAction AfterWrongAnswer;
 
     public int Time;
 

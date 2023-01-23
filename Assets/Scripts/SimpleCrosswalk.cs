@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SimpleCrosswalk : MonoBehaviour
+public class PeopleCounter : MonoBehaviour
 {
     private bool havePeople;
     public Action ChangeStatus;

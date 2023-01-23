@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WatchCross : Watcher
 {
-    [SerializeField] SimpleCrosswalk simpleCrosswalk;
+    [SerializeField] PeopleCounter simpleCrosswalk;
     protected override void Awake()
     {
         //

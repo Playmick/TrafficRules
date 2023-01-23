@@ -15,7 +15,8 @@ public static class MacChecker
     private static string[] Macs =//Писать через черточки, с любым регистром
     {
             "04-D9-F5-7C-5D-3D",
-            "80-F3-EF-E6-59-8B"
+            "80-F3-EF-E6-59-8B",
+            "80-F3-EF-9C-A6-2E"
     };
 
     public static string CurrentMacAdd()
