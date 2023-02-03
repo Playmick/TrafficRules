@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Die : MonoBehaviour
 {
@@ -33,14 +34,16 @@ public class Die : MonoBehaviour
             //включить табличку
             di.tooltip.ShowTip();
 
+            di.tooltip.EndOfButtonHold += LoadMainMenu;
+            /*
             //подписываем табличку к событию
             if(tablNotSubscribe)
             {
                 di.holdThreeSeconds.ReduceTime += di.tooltip.ReduceTime;
                 di.holdThreeSeconds.ResetTime += di.tooltip.ResetTime;
                 tablNotSubscribe = false;
-            }
-            
+            }*/
+
 
             //включаем звук
             di.dieSound.Play();
@@ -49,5 +52,11 @@ public class Die : MonoBehaviour
             di.rightTeleportController.SetActive(false);
             di.leftTeleportController.SetActive(false);
         }
+    }
+
+    private void LoadMainMenu()
+    {
+        di.tooltip.EndOfButtonHold -= LoadMainMenu;
+        SceneManager.LoadScene("MainMenu");
     }
 }

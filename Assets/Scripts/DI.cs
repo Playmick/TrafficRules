@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DI : MonoBehaviour
 {
@@ -28,6 +29,10 @@ public class DI : MonoBehaviour
     public GameObject flashBlindness;
     public Material _correctMat;
     public Material _inCorrectMat;
+    public GameObject RightRay;
+    public GameObject LeftRay;
+    public Sprite Svet1;
+    public Sprite Svet2;
 
     private void Start()
     {
@@ -51,5 +56,9 @@ public class DI : MonoBehaviour
             blackColor = player.transform.GetChild(5).gameObject;
         if (flashBlindness == null)
             flashBlindness = player.transform.GetChild(4).gameObject;
+        if (RightRay == null)
+            RightRay = GameObject.Find("Right Ray");
+        if (LeftRay == null)
+            LeftRay = GameObject.Find("Left Ray");
     }
 }

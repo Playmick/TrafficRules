@@ -47,7 +47,7 @@ public static class MacChecker
             canStart = StrCHecker(mac) || canStart;
         }
 
-        if (!canStart)
+        //if (!canStart)
             SceneManager.LoadScene(sceneName);
 
         return canStart;

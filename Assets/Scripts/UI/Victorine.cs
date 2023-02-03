@@ -1,0 +1,257 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class Victorine : MonoBehaviour
+{
+    [SerializeField] bool TurnOnInStart;
+    //массив вопросов
+    public Question[] Questions;
+
+    public int CurrentQuestion = 0;
+
+    [SerializeField]private Color greenColor;
+    [SerializeField]private Color redColor;
+
+    private DI di;
+    private int CountAlreadyReplyAnswers = 0;
+
+    private void Start()
+    {
+        di = DI.instance;
+        //выключить все канвасы
+        //выключить все надписи закрытия
+
+        //тут скорее всего нужно проверять не на нул, а на кол-во элементов
+        if (Questions.Length > 0)
+        {
+            foreach (Question q in Questions)
+            {
+                q.CloseText.text = "";
+                q.Canvas.enabled = false;
+            }
+        }
+        else
+        {
+            Debug.Log("Заполни массив Questions");
+        }
+
+        if (TurnOnInStart)
+        {
+            Activate();
+        }
+    }
+
+    public void Activate()
+    {
+        Questions[CurrentQuestion].Canvas.enabled = true;
+        Questions[CurrentQuestion].Time = 3;
+
+        //тут нужно создать поле которое если нулл то ниче не делаем, а если не нулл то
+        //через интерфейс выполнить метод "Активация возможности взаимодействия/нажатия"
+        //но времени нет, поэтому создаём жёсткую связь
+        //либо наследника викторины чтобы в этом проекте использовать расширив изначальный класс
+        di.RightRay.SetActive(true);
+        di.LeftRay.SetActive(true);
+    }
+
+    public void Deactivate()
+    {
+        Questions[CurrentQuestion].Canvas.enabled = false;
+
+        //тут нужно создать поле которое если нулл то ниче не делаем, а если не нулл то
+        //через интерфейс выполнить метод "Активация возможности взаимодействия/нажатия"
+        //но времени нет, поэтому создаём жёсткую связь
+        //либо наследника викторины чтобы в этом проекте использовать расширив изначальный класс
+        di.RightRay.SetActive(false);
+        di.LeftRay.SetActive(false);
+    }
+
+    //забиндить все кнопки
+    private void OnEnable()
+    {
+        
+        foreach (Question q in Questions)
+        {
+            if (q.Answers!=null)
+            {
+                foreach (Answer a in q.Answers)
+                    a.Button.onClick.AddListener(() => OnButtonClick(a));
+            }
+            else
+            {
+                Debug.Log("Заполни массив Answers");
+            }
+        }
+        
+    }
+
+    //отбиндить все кнопки
+    private void OnDisable()
+    {
+        //тут скорее всего нужно проверять не на нул, а на кол-во элементов
+        if (Questions.Length > 0)
+        {
+            foreach (Question q in Questions)
+            {
+                if (q.Answers.Length > 0)
+                {
+                    foreach (Answer a in q.Answers)
+                        a.Button.onClick.RemoveAllListeners();
+                }
+                else
+                {
+                    Debug.Log("Заполни массив Answers");
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("Заполни массив Questions");
+        }
+    }
+
+    void OnButtonClick(Answer _answer)
+    {
+        if(CountAlreadyReplyAnswers < Questions[CurrentQuestion].CountRightAnswers)
+        {
+            //подсветить выбранную кнопку нужным цветом
+            if (_answer.IsRight)
+            {
+                _answer.Button.image.color = greenColor;
+
+                //тут опять же стоило подумать над архитектурой, но сроки горят
+                di.tooltip.ChangeImage(di.Svet1);
+                di.tooltip.ChangeTooltipText("Ура! Вы получаете светоотражающий брелок!");
+                di.tooltip.UpdateCloseText();
+                //включить табличку
+                di.tooltip.ShowTip();
+            }
+            else
+                _answer.Button.image.color = redColor;
+
+            CountAlreadyReplyAnswers++;
+        }
+        
+        if(CountAlreadyReplyAnswers >= Questions[CurrentQuestion].CountRightAnswers)
+        {
+            
+
+            //включить надпись зажмите курок на 3 сек
+            Questions[CurrentQuestion].UpdateCloseText();
+            Questions[CurrentQuestion].ResetTime();
+
+            //уменьшение времени
+            di.holdThreeSeconds.ReduceTime += Questions[CurrentQuestion].ReduceTime;
+            //сброс времени
+            di.holdThreeSeconds.ResetTime += Questions[CurrentQuestion].ResetTime;
+
+            Questions[CurrentQuestion].NextQuestion += NextQuestion;
+        }
+        
+    }
+
+    private void NextQuestion()
+    {
+        //уменьшение времени
+        di.holdThreeSeconds.ReduceTime -= Questions[CurrentQuestion].ReduceTime;
+        //сброс времени
+        di.holdThreeSeconds.ResetTime -= Questions[CurrentQuestion].ResetTime;
+
+        //закрыли текущий канвас
+        Deactivate();
+
+        //если текущий канвас последний
+        //то ничё не делаем
+
+        //если текущий канвас не последний то включаем следующий
+        CurrentQuestion++;
+        if (CurrentQuestion < Questions.Length)
+            Activate();
+    }
+
+    
+
+    
+}
+
+[System.Serializable]
+public class Question
+{
+    //экран с вопросом
+    public Canvas Canvas;
+
+    public Text CloseText;
+
+    //текст для вопроса
+    public Text TextQuestion;
+
+    //массив ответов(это должны быть кнопки)
+    public Answer[] Answers;
+
+    public Action NextQuestion;
+
+    public int Time;
+
+    private int countRightAnswers = 0;
+
+    //сколько должно быть верных ответов?
+    public int CountRightAnswers
+    {
+        get
+        {
+            if (countRightAnswers <= 0)
+            {
+                if (Answers.Length > 0)
+                {
+                    foreach (Answer a in Answers)
+                    {
+                        if (a.IsRight)
+                            countRightAnswers++;
+                    }
+                }
+                else
+                {
+                    Debug.Log("Добавьте ответы в массив");
+                }
+            }
+            return countRightAnswers;
+        }
+        set
+        {
+            countRightAnswers = value;
+        }
+    }
+    public void UpdateCloseText()
+    {
+        CloseText.text = $"Удерживайте курок контроллера {Time} секунды для перехода далее.";
+    }
+
+    public void ReduceTime()
+    {
+        Time = Time - 1;
+        UpdateCloseText();
+        if (Time <= 0)
+            NextQuestion?.Invoke();
+    }
+
+    public void ResetTime()
+    {
+        Time = 3;
+        UpdateCloseText();
+    }
+
+}
+
+[System.Serializable]
+public class Answer
+{
+    //кнопка
+    public Button Button;
+
+    //верный?
+    public bool IsRight;
+}
+
