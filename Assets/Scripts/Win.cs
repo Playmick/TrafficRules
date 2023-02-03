@@ -20,29 +20,34 @@ public class Win : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            if (arrow != null)
-                arrow.SetActive(false);
-            //сменить текст на табличке
-            di.tooltip.ChangeTooltipText("Ура, вы получаете световозвращающий браслет!");
-            di.tooltip.UpdateCloseText();
-            di.tooltip.ChangeImage(di.Svet2);
-            //включить табличку
-            di.tooltip.ShowTip();
-
-            di.tooltip.EndOfButtonHold += LoadMainMenu;
-            /*
-            //подписываем табличку к событию
-            if (tablNotSubscribe)
-            {
-                di.holdThreeSeconds.ReduceTime += di.tooltip.ReduceTime;
-                di.holdThreeSeconds.ResetTime += di.tooltip.ResetTime;
-                tablNotSubscribe = false;
-            }*/
-
-            //отключить телепорт
-            di.rightTeleportController.SetActive(false);
-            di.leftTeleportController.SetActive(false);
+            WinMethod();
         }
+    }
+
+    public void WinMethod()
+    {
+        if (arrow != null)
+            arrow.SetActive(false);
+        //сменить текст на табличке
+        di.tooltip.ChangeTooltipText("Ура, вы прошли викторину!");
+        di.tooltip.UpdateCloseText();
+        di.tooltip.ChangeImage(di.Svet2);
+        //включить табличку
+        di.tooltip.ShowTip();
+
+        di.tooltip.EndOfButtonHold += LoadMainMenu;
+        /*
+        //подписываем табличку к событию
+        if (tablNotSubscribe)
+        {
+            di.holdThreeSeconds.ReduceTime += di.tooltip.ReduceTime;
+            di.holdThreeSeconds.ResetTime += di.tooltip.ResetTime;
+            tablNotSubscribe = false;
+        }*/
+
+        //отключить телепорт
+        di.rightTeleportController.SetActive(false);
+        di.leftTeleportController.SetActive(false);
     }
 
     private void LoadMainMenu()
