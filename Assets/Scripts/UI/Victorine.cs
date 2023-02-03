@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -46,6 +47,8 @@ public class Victorine : MonoBehaviour
 
     public void Activate()
     {
+        CountAlreadyReplyAnswers = 0;
+
         Questions[CurrentQuestion].Canvas.enabled = true;
         Questions[CurrentQuestion].Time = 3;
 
@@ -115,6 +118,7 @@ public class Victorine : MonoBehaviour
 
     void OnButtonClick(Answer _answer)
     {
+        //если мы ответили не на все вопросы
         if(CountAlreadyReplyAnswers < Questions[CurrentQuestion].CountRightAnswers)
         {
             //подсветить выбранную кнопку нужным цветом
@@ -143,9 +147,9 @@ public class Victorine : MonoBehaviour
             CountAlreadyReplyAnswers++;
         }
         
+        //если мы ответили на все вопросы
         if(CountAlreadyReplyAnswers >= Questions[CurrentQuestion].CountRightAnswers)
         {
-            
 
             //включить надпись зажмите курок на 3 сек
             Questions[CurrentQuestion].UpdateCloseText();
@@ -174,6 +178,8 @@ public class Victorine : MonoBehaviour
         //если текущий канвас последний
         //то ничё не делаем
 
+        Questions[CurrentQuestion].NextQuestion -= NextQuestion;
+
         //если текущий канвас не последний то включаем следующий
         CurrentQuestion++;
         if (CurrentQuestion < Questions.Length)
@@ -191,17 +197,15 @@ public class Question
     //экран с вопросом
     public Canvas Canvas;
 
-    public Text CloseText;
-
-    //текст для вопроса
-    public Text TextQuestion;
-
     //массив ответов(это должны быть кнопки)
     public Answer[] Answers;
 
+    public Text CloseText;
+
     public Action NextQuestion;
-    public UnityAction AfterRightAnswer;
-    public UnityAction AfterWrongAnswer;
+    
+    public UnityEvent AfterRightAnswer;
+    public UnityEvent AfterWrongAnswer;
 
     public int Time;
 
