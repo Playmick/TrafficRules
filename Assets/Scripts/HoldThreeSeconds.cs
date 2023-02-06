@@ -18,11 +18,18 @@ public class HoldThreeSeconds : MonoBehaviour
 
     private IEnumerator routine;
 
-    private void Awake()
+    private void OnEnable()
     {
         activateButton.action.performed += HoldActivate;
         deActivateButton.action.canceled += HoldCanceled;
     }
+
+    private void OnDisable()
+    {
+        activateButton.action.performed -= HoldActivate;
+        deActivateButton.action.canceled -= HoldCanceled;
+    }
+
     private void HoldActivate(InputAction.CallbackContext obj)
     {
         //Debug.Log("Начал удерживать");
