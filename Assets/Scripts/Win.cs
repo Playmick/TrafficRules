@@ -31,7 +31,7 @@ public class Win : MonoBehaviour
         //сменить текст на табличке
         di.tooltip.ChangeTooltipText("Ура, вы прошли викторину!");
         di.tooltip.UpdateCloseText();
-        di.tooltip.ChangeImage(di.Svet2);
+        //di.tooltip.ChangeImage(di.Svet2);
         //включить табличку
         di.tooltip.ShowTip();
 
