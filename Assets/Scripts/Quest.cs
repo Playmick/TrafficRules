@@ -12,6 +12,9 @@ using UnityEngine.InputSystem;
 
 public class Quest : MonoBehaviour
 {
+    [Space]
+    public UnityEvent eventBeforeStartSteps = new UnityEvent();
+
     public int CurrentNumberStep { get; private set; }
     public Step[] steps;
 
@@ -19,16 +22,30 @@ public class Quest : MonoBehaviour
     [Tooltip("Задайте кнопку для перехода к следующему шагу")]
     [SerializeField] InputActionReference controllerNextStep;
 
+    
     //______________________system variables
+    //сюда помещаем диктора из шага
     private AudioSource auDictor;
     IEnumerator waitSpeachDictor;
     Action playstep;
     public int testStep;
     //_______________________
-
+    
     private void Start()
     {
         CurrentNumberStep = 0;
+    }
+
+    public void StartFirstStep()
+    {
+        if (steps.Length > 0)
+        {
+            steps[CurrentNumberStep].StartStep();
+            steps[CurrentNumberStep].StepComplete += NextStep;
+        }
+        else
+            Debug.Log("Шагов нет");
+        
     }
 
     protected virtual void OnEnable()
@@ -47,35 +64,95 @@ public class Quest : MonoBehaviour
             NextStep();
     }
 
-    void NextStep()
+    private void NextStep()
     {
-        //остановить звук
-        steps[CurrentNumberStep].eventAfterStep?.Invoke();
-        CurrentNumberStep++;
-        steps[CurrentNumberStep].eventBeforeStartStep?.Invoke();
-        //если подсказка не как предыдущая
-            //заменить подсказку
-        //если подсказка обязательна
-            //показать подсказку
-        //включить звук
-        //если переходим к следующему шагу после диктора то запускаем корутину которая ждёт его завершения
+        if (steps.Length > 0)
+        {
+            //отписать предыдущий шаг если он не первый
+            if (CurrentNumberStep > 0)
+            {
+                steps[CurrentNumberStep].StepComplete -= NextStep;
+            }
+
+            //остановить звук
+            if(auDictor.isPlaying)
+            {
+                auDictor.Stop();
+            }
+            auDictor.clip = null;
+
+            //проверить что текущий шаг не превышает их количество
+            if (CurrentNumberStep < steps.Length)
+            {
+                CurrentNumberStep++;
+
+                steps[CurrentNumberStep].StartStep();
+
+                //если звук не нулл
+                if(steps[CurrentNumberStep].dictor!=null)
+                {
+                    //вставить в аудиосоурс звук из шага
+                    auDictor.clip = steps[CurrentNumberStep].dictor;
+                    //включить звук
+                    auDictor.Play();
+                }
+
+                //звуком управляем из квеста, а не из шага т.к. звук может досрочно завершить шаг
+                //и звук не должен накладываться друг на друга, а завершить его можно только снаружи т.к. ссылка на кнопку завершения у квеста
+
+                //если переходим к следующему шагу после диктора то запускаем корутину которая ждёт его завершения
+                if (steps[CurrentNumberStep].nextAfterDictor)
+                {
+                    if (waitSpeachDictor != null)
+                    {
+                        StopCoroutine(waitSpeachDictor);
+                        waitSpeachDictor = null;
+                        auDictor.Stop();
+                        auDictor.clip = null;
+                    }
+                    waitSpeachDictor = WaitSpeachDictor();
+                    StartCoroutine(waitSpeachDictor);
+                }
+
+                steps[CurrentNumberStep].StepComplete += NextStep;
+            }
+            else
+            {
+                //все шаги кончились
+                DI.instance.win.WinMethod();
+            }
+        }
+        else
+            Debug.Log("Шагов нет");
+    }
+    
+    //ждём пока диктор выговорится
+    IEnumerator WaitSpeachDictor()
+    {
+        if (steps[CurrentNumberStep].dictor != null)
+        {
+            yield return new WaitForSeconds(auDictor.clip.length + 0.5f);
+        }
+        else
+        {
+            yield return null;
+        }
+        waitSpeachDictor = null;
         //по завершении снова запускаем NextStep
+        NextStep();
     }
 
 }
 
 /// <summary>
 /// Данные об одном шаге
+/// надо бы все переменные сделать приватными
 /// </summary>
 [System.Serializable]
 public class Step
 {
-    public string name;
-
-    [Space]
-    public UnityEvent eventBeforeStartStep = new UnityEvent();
-
-
+    [SerializeField] private string name;
+    
     [Tooltip("Озвучка диктором")]
     public AudioClip dictor;
 
@@ -83,18 +160,71 @@ public class Step
     [Tooltip("Продолжить сразу после речи диктора?")]
     public bool nextAfterDictor = false;
 
+    //это надо наследника сделать от квеста для этого проекта и пусть он к DI обращается, а у старшей версии не делать эти 3 фичи
+    //но я не знаю как это сделать
     [Space]
     [Tooltip("Вывести ли подсказку принудительно на этом шаге?")]
-    public bool forcedShowToolTip = false;
+    [SerializeField]private bool forcedShowToolTip = false;
     [Tooltip("Как в предыдущем")]
-    public bool likePrevious = true;
+    [SerializeField] private bool likePrevious = true;
     [Tooltip("Текстовая подсказка")]
-    public string tipText;
+    [SerializeField] private string tipText;
 
+    [Space]
+    [Tooltip("Объекты, которые должны быть выполнеными для продолжения сценария")]
+    [SerializeField] private List<Interactive> shouldBeCompleted;
+
+    [Space]
     [Tooltip("Переход к следующему шагу будет по клику на кнопку")]
     public bool clickToNextStep;
 
+    [Space]
+    [Tooltip("Сколько действий осталось")]
+    [SerializeField] private int RemainingActions;
 
     [Space]
-    public UnityEvent eventAfterStep = new UnityEvent();
+    [SerializeField] private UnityEvent eventAfterStep = new UnityEvent();
+
+    public Action StepComplete;
+    
+    //по хорошему тут должен быть конструктор, но я не знаю когда он вызывается
+    public void StartStep()
+    {
+        RemainingActions = shouldBeCompleted.Count;
+
+        //если подсказка не как предыдущая
+        if (!likePrevious)
+        {
+            //заменить подсказку
+            DI.instance.tooltip.ChangeTooltipText(tipText);
+        }
+
+        //если подсказка обязательна
+        if (forcedShowToolTip)
+        {
+            //показать подсказку
+            DI.instance.tooltip.ShowTip();
+        }
+
+        //подписываем метод OneActionHasCompleted на все события CompleteAction из массива shouldBeCompleted
+        foreach(Interactive item in shouldBeCompleted)
+        {
+            item.CompleteAction += OneActionHasCompleted;
+        }
+    }
+
+    public void OneActionHasCompleted()
+    {
+        RemainingActions--;
+        if(RemainingActions<=0)
+        {
+            //отписываем метод OneActionHasCompleted на все события CompleteAction из массива shouldBeCompleted
+            foreach (Interactive item in shouldBeCompleted)
+            {
+                item.CompleteAction -= OneActionHasCompleted;
+            }
+            eventAfterStep?.Invoke();
+            StepComplete?.Invoke();
+        }
+    }
 }

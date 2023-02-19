@@ -20,6 +20,7 @@ public class DI : MonoBehaviour
     #endregion
     
     public GameObject player;
+    public Win win;
     public Tooltip tooltip;
     public HoldThreeSeconds holdThreeSeconds;
     public AudioSource dieSound;
@@ -60,5 +61,7 @@ public class DI : MonoBehaviour
             RightRay = GameObject.Find("Right Ray");
         if (LeftRay == null)
             LeftRay = GameObject.Find("Left Ray");
+        if (win == null)
+            win = GameObject.Find("Win").GetComponent<Win>();
     }
 }
