@@ -32,6 +32,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Alex3D/Perekrestok.unity
     guid: 594a9fcf8f2a41b499705219523b2c58
+  - enabled: 1
+    path: Assets/Scenes/InspectorDPS.unity
+    guid: 7aa565a63df7f1b4c8cfd7f3f395a54b
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 6802685daf2dde44ba84f8d126f90b35,
       type: 2}

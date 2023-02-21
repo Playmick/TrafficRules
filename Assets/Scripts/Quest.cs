@@ -33,13 +33,20 @@ public class Quest : MonoBehaviour
     
     private void Start()
     {
+        auDictor = gameObject.GetComponent<AudioSource>();
+        if (auDictor == null) auDictor = gameObject.AddComponent<AudioSource>();
+        auDictor.volume = 0.8f;
+
         CurrentNumberStep = 0;
+        StartFirstStep();
     }
 
     public void StartFirstStep()
     {
         if (steps.Length > 0)
         {
+            eventBeforeStartSteps?.Invoke();
+            DictorSoundOn();
             steps[CurrentNumberStep].StartStep();
             steps[CurrentNumberStep].StepComplete += NextStep;
         }
@@ -61,7 +68,7 @@ public class Quest : MonoBehaviour
     void ClickNextStepButton(InputAction.CallbackContext obj)
     {
         if (steps[CurrentNumberStep].clickToNextStep)
-            NextStep();
+            steps[CurrentNumberStep].StartStep();
     }
 
     private void NextStep()
@@ -81,21 +88,13 @@ public class Quest : MonoBehaviour
             }
             auDictor.clip = null;
 
+            CurrentNumberStep++;
+
             //проверить что текущий шаг не превышает их количество
             if (CurrentNumberStep < steps.Length)
             {
-                CurrentNumberStep++;
-
                 steps[CurrentNumberStep].StartStep();
-
-                //если звук не нулл
-                if(steps[CurrentNumberStep].dictor!=null)
-                {
-                    //вставить в аудиосоурс звук из шага
-                    auDictor.clip = steps[CurrentNumberStep].dictor;
-                    //включить звук
-                    auDictor.Play();
-                }
+                DictorSoundOn();
 
                 //звуком управляем из квеста, а не из шага т.к. звук может досрочно завершить шаг
                 //и звук не должен накладываться друг на друга, а завершить его можно только снаружи т.к. ссылка на кнопку завершения у квеста
@@ -116,21 +115,52 @@ public class Quest : MonoBehaviour
 
                 steps[CurrentNumberStep].StepComplete += NextStep;
             }
+            //все шаги кончились
+            /*
             else
             {
-                //все шаги кончились
+                
                 DI.instance.win.WinMethod();
-            }
+            }*/
         }
         else
             Debug.Log("Шагов нет");
     }
+
+    private void DictorSoundOn()
+    {
+        //если звук не нулл
+        if (steps[CurrentNumberStep].dictor != null)
+        {
+            //вставить в аудиосоурс звук из шага
+            auDictor.clip = steps[CurrentNumberStep].dictor;
+
+            //включить звук
+            StartCoroutine(DictorOnStart());
+        }
+    }
     
+    //просто костыль хз как отследить загрузку сцены
+    IEnumerator DictorOnStart()
+    {
+        if (CurrentNumberStep == 0)
+        {
+            yield return new WaitForSeconds(7f);
+        }
+        else
+            yield return null;
+
+        auDictor.Play();
+    }
+
     //ждём пока диктор выговорится
     IEnumerator WaitSpeachDictor()
     {
+        steps[CurrentNumberStep].StartStep();
         if (steps[CurrentNumberStep].dictor != null)
         {
+            if (CurrentNumberStep == 0)
+                yield return new WaitForSeconds(7f);
             yield return new WaitForSeconds(auDictor.clip.length + 0.5f);
         }
         else
@@ -138,8 +168,9 @@ public class Quest : MonoBehaviour
             yield return null;
         }
         waitSpeachDictor = null;
-        //по завершении снова запускаем NextStep
-        NextStep();
+
+        //по завершении запускаем шаг чтобы отработали события после него
+        steps[CurrentNumberStep].StopStep();
     }
 
 }
@@ -183,15 +214,13 @@ public class Step
     [SerializeField] private int RemainingActions;
 
     [Space]
-    [SerializeField] private UnityEvent eventAfterStep = new UnityEvent();
+    public UnityEvent eventAfterStep = new UnityEvent();
 
     public Action StepComplete;
     
     //по хорошему тут должен быть конструктор, но я не знаю когда он вызывается
     public void StartStep()
     {
-        RemainingActions = shouldBeCompleted.Count;
-
         //если подсказка не как предыдущая
         if (!likePrevious)
         {
@@ -206,11 +235,36 @@ public class Step
             DI.instance.tooltip.ShowTip();
         }
 
-        //подписываем метод OneActionHasCompleted на все события CompleteAction из массива shouldBeCompleted
-        foreach(Interactive item in shouldBeCompleted)
+        
+        if(shouldBeCompleted.Count>0)
         {
-            item.CompleteAction += OneActionHasCompleted;
+            RemainingActions = shouldBeCompleted.Count;
+
+            //подписываем метод OneActionHasCompleted на все события CompleteAction из массива shouldBeCompleted
+            for (int i = 0; i< shouldBeCompleted.Count; i++)
+            {
+                Interactive item = shouldBeCompleted[i];
+                if (item != null)
+                {
+                    item.CompleteAction += OneActionHasCompleted;
+                }
+                else
+                {
+                    Debug.Log("В шаге " + name + $" вещь с индексом {i} не назначена");
+                }
+            }
         }
+        else if(!clickToNextStep && !nextAfterDictor)
+        {
+            Debug.Log("Скипаем шаг " + name);
+            StopStep();
+        }
+        else
+        {
+            //ждём клика или диктора
+            Debug.Log("В шаге " + name + " нет интерактивных объектов");
+        }
+        
     }
 
     public void OneActionHasCompleted()
@@ -223,8 +277,13 @@ public class Step
             {
                 item.CompleteAction -= OneActionHasCompleted;
             }
-            eventAfterStep?.Invoke();
-            StepComplete?.Invoke();
+            StopStep();
         }
+    }
+
+    public void StopStep()
+    {
+        eventAfterStep?.Invoke();
+        StepComplete?.Invoke();
     }
 }

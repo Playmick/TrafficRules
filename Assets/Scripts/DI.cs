@@ -62,6 +62,6 @@ public class DI : MonoBehaviour
         if (LeftRay == null)
             LeftRay = GameObject.Find("Left Ray");
         if (win == null)
-            win = GameObject.Find("Win").GetComponent<Win>();
+            win = GameObject.Find("WinPosition").GetComponent<Win>();
     }
 }

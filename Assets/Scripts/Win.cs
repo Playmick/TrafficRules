@@ -7,7 +7,10 @@ public class Win : MonoBehaviour
 {
     private DI di;
 
+    private string winText = "Выполнено";
     public GameObject arrow;
+
+    public string WinText { get => winText; set => winText = value; }
 
     //bool tablNotSubscribe;
     void Start()
@@ -29,7 +32,7 @@ public class Win : MonoBehaviour
         if (arrow != null)
             arrow.SetActive(false);
         //сменить текст на табличке
-        di.tooltip.ChangeTooltipText("Ура, вы прошли викторину!");
+        di.tooltip.ChangeTooltipText(WinText);
         di.tooltip.UpdateCloseText();
         //di.tooltip.ChangeImage(di.Svet2);
         //включить табличку
