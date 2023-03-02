@@ -3,14 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Win : MonoBehaviour
+public class Win : ShowMessageInTrigger
 {
     private DI di;
 
-    private string winText = "Выполнено";
+    
     public GameObject arrow;
 
+    //текст победы меняется через квест
     public string WinText { get => winText; set => winText = value; }
+    [SerializeField]private string winText = "Выполнено";
+
+    public Sprite WinImage { get => winImage; set => winImage = value; }
+    [SerializeField] private Sprite winImage = null;
 
     //bool tablNotSubscribe;
     void Start()
@@ -29,28 +34,22 @@ public class Win : MonoBehaviour
 
     public void WinMethod()
     {
-        if (arrow != null)
-            arrow.SetActive(false);
         //сменить текст на табличке
         di.tooltip.ChangeTooltipText(WinText);
-        di.tooltip.UpdateCloseText();
-        //di.tooltip.ChangeImage(di.Svet2);
+        di.tooltip.UpdateTimerText();
+
+        di.tooltip.ChangeImage(WinImage);
+
         //включить табличку
-        di.tooltip.ShowTip();
+        di.tooltip.ShowTipWithTimer();
 
         di.tooltip.EndOfButtonHold += LoadMainMenu;
-        /*
-        //подписываем табличку к событию
-        if (tablNotSubscribe)
-        {
-            di.holdThreeSeconds.ReduceTime += di.tooltip.ReduceTime;
-            di.holdThreeSeconds.ResetTime += di.tooltip.ResetTime;
-            tablNotSubscribe = false;
-        }*/
-
+        
         //отключить телепорт
         di.rightTeleportController.SetActive(false);
         di.leftTeleportController.SetActive(false);
+
+        arrow?.SetActive(false);
     }
 
     private void LoadMainMenu()

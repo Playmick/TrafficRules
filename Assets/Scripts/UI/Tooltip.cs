@@ -10,7 +10,11 @@ public class Tooltip : MonoBehaviour
 {
     [SerializeField] GameObject tipGameObject;
     [SerializeField] Text tooltipText;
-    [SerializeField] Text closeText;
+    [SerializeField] Text CloseText;
+
+    public string CloseString { get => closeString; set => closeString = value; }
+    [SerializeField] string closeString = "Нажмите кнопку Y чтобы закрыть.";
+
     [SerializeField] InputActionReference controllerTipButton;
     [SerializeField] Image Image;
 
@@ -26,7 +30,14 @@ public class Tooltip : MonoBehaviour
         if(!tipGameObject.activeSelf)
             tooltipText.text = value;
     }
-    public void ShowTip()
+
+    public void ChangeTooltipCloseText(string value)
+    {
+        if (!tipGameObject.activeSelf)
+            tooltipText.text = value;
+    }
+
+    public void ShowTipWithTimer()
     {
         ResetTime();
         tipGameObject.SetActive(true);
@@ -34,6 +45,12 @@ public class Tooltip : MonoBehaviour
         di.holdThreeSeconds.ResetTime += di.tooltip.ResetTime;
         canClose = false;
     }
+    public void ShowTip()
+    {
+        tipGameObject.SetActive(true);
+        canClose = false;
+    }
+
     public void CloseTip()
     {
         tipGameObject.SetActive(false);
@@ -42,7 +59,7 @@ public class Tooltip : MonoBehaviour
     public void ReduceTime()
     {
         time = time-1;
-        UpdateCloseText();
+        UpdateTimerText();
         if (time <= 0)
         {
             EndOfButtonHold?.Invoke();
@@ -53,12 +70,12 @@ public class Tooltip : MonoBehaviour
     public void ResetTime()
     {
         time=3;
-        UpdateCloseText();
+        UpdateTimerText();
     }
 
-    public void UpdateCloseText()
+    public void UpdateTimerText()
     {
-        closeText.text = $"Удерживайте курок контроллера {time} секунды для выхода из сценария";
+        CloseText.text = $"Удерживайте курок контроллера {time} секунды для выхода из сценария";
     }
 
     public void CloseImage()
@@ -68,8 +85,14 @@ public class Tooltip : MonoBehaviour
 
     public void ChangeImage(Sprite _sprite)
     {
-        Image.enabled = true;
-        Image.sprite = _sprite;
+        if(_sprite == null)
+            CloseImage();
+        else
+        {
+            Image.enabled = true;
+            Image.sprite = _sprite;
+        }
+        
     }
 
 
@@ -84,13 +107,13 @@ public class Tooltip : MonoBehaviour
         if (controllerTipButton == null)
             Debug.Log("Назначь кнопку для подсказки на " + gameObject.name);
 
-        if (closeText == null)
+        if (CloseText == null)
             Debug.Log("Назначь текст закрытия объекту " + gameObject.name);
 
         if (Image == null)
             Debug.Log("Назначь картинку объекту " + gameObject.name);
 
-        closeText.text = "";
+        CloseText.text = "";
         canClose = true;
 
         controllerTipButton.action.performed += TipPress;

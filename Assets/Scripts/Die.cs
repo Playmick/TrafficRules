@@ -3,55 +3,45 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Die : MonoBehaviour
+public class Die : ShowMessageInTrigger
 {
     protected DI di;
-    //[SerializeField] bool defaultText;
 
-    bool tablNotSubscribe;
+    public string DieText { get => dieText; set => dieText = value; }
+    [SerializeField]private string dieText = "Вы проиграли";
+
+    public Sprite DieImage { get => dieImage; set => dieImage = value; }
+    [SerializeField] private Sprite dieImage = null;
+
     void Start()
     {
         di = DI.instance;
-        tablNotSubscribe = true;
     }
 
     void OnTriggerEnter(Collider other)
     {
         if(other.CompareTag("Player"))
         {
-            /*
-            //сменить текст на табличке
-            if(defaultText)
-                di.tooltip.ChangeTooltipText("Нельзя выходить на дорогу, нарушая правила дорожного движения.");
-            */
-
             //"вспышка"
             di.blackColor.SetActive(true);
             di.flashBlindness.SetActive(true);
 
-            di.tooltip.ChangeTooltipText("Переход не безопасен. Ознакомьтесь с ПДД 4.5");
-            di.tooltip.CloseImage();
-            di.tooltip.UpdateCloseText();
+            di.tooltip.ChangeTooltipText(DieText);
+            //di.tooltip.CloseImage();
+            di.tooltip.ChangeImage(DieImage);
+
+            di.tooltip.UpdateTimerText();
             //включить табличку
-            di.tooltip.ShowTip();
+            di.tooltip.ShowTipWithTimer();
 
             di.tooltip.EndOfButtonHold += LoadMainMenu;
-            /*
-            //подписываем табличку к событию
-            if(tablNotSubscribe)
-            {
-                di.holdThreeSeconds.ReduceTime += di.tooltip.ReduceTime;
-                di.holdThreeSeconds.ResetTime += di.tooltip.ResetTime;
-                tablNotSubscribe = false;
-            }*/
-
-
-            //включаем звук
-            di.dieSound.Play();
 
             //отключить телепорт
             di.rightTeleportController.SetActive(false);
             di.leftTeleportController.SetActive(false);
+
+            //включаем звук
+            di.dieSound?.Play();
         }
     }
 

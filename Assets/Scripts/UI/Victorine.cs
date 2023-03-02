@@ -14,6 +14,8 @@ public class Victorine : MonoBehaviour
 
     public int CurrentQuestion = 0;
 
+    [SerializeField]private UnityEvent CompleteVictorine;
+
     [SerializeField]private Color greenColor;
     [SerializeField]private Color redColor;
 
@@ -51,25 +53,7 @@ public class Victorine : MonoBehaviour
 
         Questions[CurrentQuestion].Canvas.enabled = true;
         Questions[CurrentQuestion].Time = 3;
-
-        //тут нужно создать поле которое если нулл то ниче не делаем, а если не нулл то
-        //через интерфейс выполнить метод "Активация возможности взаимодействия/нажатия"
-        //но времени нет, поэтому создаём жёсткую связь
-        //либо наследника викторины чтобы в этом проекте использовать расширив изначальный класс
-        di.RightRay.SetActive(true);
-        di.LeftRay.SetActive(true);
-    }
-
-    public void Deactivate()
-    {
-        Questions[CurrentQuestion].Canvas.enabled = false;
-
-        //тут нужно создать поле которое если нулл то ниче не делаем, а если не нулл то
-        //через интерфейс выполнить метод "Активация возможности взаимодействия/нажатия"
-        //но времени нет, поэтому создаём жёсткую связь
-        //либо наследника викторины чтобы в этом проекте использовать расширив изначальный класс
-        di.RightRay.SetActive(false);
-        di.LeftRay.SetActive(false);
+        
     }
 
     //забиндить все кнопки
@@ -172,8 +156,7 @@ public class Victorine : MonoBehaviour
         //сброс времени
         di.holdThreeSeconds.ResetTime -= Questions[CurrentQuestion].ResetTime;
 
-        //закрыли текущий канвас
-        Deactivate();
+        CompleteVictorine?.Invoke();
 
         //если текущий канвас последний
         //то ничё не делаем

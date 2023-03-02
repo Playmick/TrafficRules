@@ -232,7 +232,7 @@ public class Step
         if (forcedShowToolTip)
         {
             //показать подсказку
-            DI.instance.tooltip.ShowTip();
+            DI.instance.tooltip.ShowTipWithTimer();
         }
 
         
