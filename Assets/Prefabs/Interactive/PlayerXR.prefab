@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 62532357}
   - component: {fileID: 62532356}
   m_Layer: 0
-  m_Name: Text (Legacy) (1)
+  m_Name: CloseText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 4391038272567340958}
   - component: {fileID: 5023394821112582541}
   m_Layer: 0
-  m_Name: Text (Legacy)
+  m_Name: MainText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3388,7 +3388,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tipGameObject: {fileID: 391746605263238250}
   tooltipText: {fileID: 5023394821112582541}
-  closeText: {fileID: 62532356}
+  CloseText: {fileID: 62532356}
+  _closeString: "\u041D\u0430\u0436\u043C\u0438\u0442\u0435 \u043A\u043D\u043E\u043F\u043A\u0443
+    Y \u0447\u0442\u043E\u0431\u044B \u0437\u0430\u043A\u0440\u044B\u0442\u044C."
   controllerTipButton: {fileID: -5600454181638139738, guid: c348712bda248c246b8c49b3db54643f,
     type: 3}
   Image: {fileID: 3202293436926238921}

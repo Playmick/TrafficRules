@@ -10,10 +10,23 @@ public class Tooltip : MonoBehaviour
 {
     [SerializeField] GameObject tipGameObject;
     [SerializeField] Text tooltipText;
-    [SerializeField] Text CloseText;
+    [SerializeField] private Text CloseText;
 
-    public string CloseString { get => closeString; set => closeString = value; }
-    [SerializeField] string closeString = "Нажмите кнопку Y чтобы закрыть.";
+    public string closeString
+    {
+        get => _closeString;
+        set
+        {
+            _closeString = value;
+            CloseText.text = _closeString;
+        }
+    }
+    //эта переменная на всякий случай если подсказка закрыта, а текст пытаемся изменить чтобы он хотяб запомнился
+    //но если подсказка открывается с кнопки то он по любому должен быть таким
+    [SerializeField] string _closeString = "Нажмите кнопку Y чтобы закрыть.";
+
+    public string simpleTooltipText { get; set; }
+    public string timerTooltipText { get; set; }
 
     [SerializeField] InputActionReference controllerTipButton;
     [SerializeField] Image Image;
@@ -22,39 +35,62 @@ public class Tooltip : MonoBehaviour
 
     DI di;
 
-    private bool canClose;
+    enum StateTip
+    {
+        SimpleTip,
+        TimerTip,
+        Closed
+    }
+
+    private StateTip stateTip = StateTip.Closed;
+
     [SerializeField] private int time;
 
-    public void ChangeTooltipText(string value)
+    private void ChangeTooltipText(string value)
     {
-        if(!tipGameObject.activeSelf)
-            tooltipText.text = value;
+        tooltipText.text = value;
     }
 
+    /*
     public void ChangeTooltipCloseText(string value)
     {
-        if (!tipGameObject.activeSelf)
-            tooltipText.text = value;
-    }
+        closeString = value;
+    }*/
 
     public void ShowTipWithTimer()
     {
         ResetTime();
         tipGameObject.SetActive(true);
-        di.holdThreeSeconds.ReduceTime += di.tooltip.ReduceTime;
-        di.holdThreeSeconds.ResetTime += di.tooltip.ResetTime;
-        canClose = false;
+        ChangeTooltipText(timerTooltipText);
+        UpdateTimerText();
+        di.holdThreeSeconds.ReduceTime += ReduceTime;
+        di.holdThreeSeconds.ResetTime += ResetTime;
+        stateTip = StateTip.TimerTip;
     }
-    public void ShowTip()
+    public void ShowSimpleTip()
     {
-        tipGameObject.SetActive(true);
-        canClose = false;
+        if(stateTip!=StateTip.TimerTip)
+        {
+            tipGameObject.SetActive(true);
+            ChangeTooltipText(simpleTooltipText);
+            if (closeString.Length == 0)
+            {
+                closeString = "Нажмите кнопку Y чтобы закрыть.";
+            }
+            stateTip = StateTip.SimpleTip;
+        }
+        
     }
 
-    public void CloseTip()
+    public void CloseSimpleTip()
     {
-        tipGameObject.SetActive(false);
-        canClose = true;
+        if (stateTip != StateTip.TimerTip)
+        {
+            tipGameObject.SetActive(false);
+            closeString = "";
+            stateTip = StateTip.Closed;
+        }
+        
     }
     public void ReduceTime()
     {
@@ -63,7 +99,11 @@ public class Tooltip : MonoBehaviour
         if (time <= 0)
         {
             EndOfButtonHold?.Invoke();
+            di.holdThreeSeconds.ReduceTime -= ReduceTime;
+            di.holdThreeSeconds.ResetTime -= ResetTime;
             tipGameObject.SetActive(false);
+            closeString = "";
+            stateTip = StateTip.Closed;
         }
             
     }
@@ -75,7 +115,7 @@ public class Tooltip : MonoBehaviour
 
     public void UpdateTimerText()
     {
-        CloseText.text = $"Удерживайте курок контроллера {time} секунды для выхода из сценария";
+        closeString = $"Удерживайте курок контроллера {time} секунды для выхода из сценария";
     }
 
     public void CloseImage()
@@ -113,20 +153,28 @@ public class Tooltip : MonoBehaviour
         if (Image == null)
             Debug.Log("Назначь картинку объекту " + gameObject.name);
 
-        CloseText.text = "";
-        canClose = true;
+        tooltipText.text = "Подсказка";
+        closeString = "";
+        stateTip = StateTip.Closed;
 
         controllerTipButton.action.performed += TipPress;
     }
     private void OnDisable()
     {
         controllerTipButton.action.performed -= TipPress;
-        di.holdThreeSeconds.ReduceTime -= di.tooltip.ReduceTime;
-        di.holdThreeSeconds.ResetTime -= di.tooltip.ResetTime;
+        di.holdThreeSeconds.ReduceTime -= ReduceTime;
+        di.holdThreeSeconds.ResetTime -= ResetTime;
     }
     private void TipPress(InputAction.CallbackContext obj)
     {
-        if(canClose)
-            tipGameObject.SetActive(!tipGameObject.activeSelf);
+        //если подсказка в состоянии обычной подсказки или закрыта
+        if (stateTip == StateTip.SimpleTip)
+            CloseSimpleTip();
+        else if (stateTip == StateTip.Closed)
+        {
+            closeString = "Нажмите кнопку Y чтобы закрыть.";
+            ShowSimpleTip();
+        }
+            
     }
 }

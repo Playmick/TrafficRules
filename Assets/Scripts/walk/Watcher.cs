@@ -86,7 +86,7 @@ public class Watcher : MonoBehaviour
     {
         if (OtherPeopleCanGo())
         {
-            di.tooltip.ChangeTooltipText("ѕеред переходом через переход об€зательно нужно посмотреть по сторонам.");
+            //di.tooltip.ChangeTooltipText("ѕеред переходом через переход об€зательно нужно посмотреть по сторонам.");
         }
         if (OtherPeopleCanGo() == false)
         {
@@ -98,7 +98,7 @@ public class Watcher : MonoBehaviour
 
     protected virtual void SemaphoreWarningOn()
     {
-        di.tooltip.ChangeTooltipText("¬ы перешли на красный сигнал светофора!");
+        //di.tooltip.ChangeTooltipText("¬ы перешли на красный сигнал светофора!");
         StartCoroutine(OnDieZone());
     }
 

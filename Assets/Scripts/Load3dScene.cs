@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class Load3dScene : MonoBehaviour
 {
+    [SerializeField] string sceneName = "Perekrestok";
     // Start is called before the first frame update
-    void Awake() => SceneManager.LoadScene("Perekrestok", LoadSceneMode.Additive);
+    void Awake() => SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
 }

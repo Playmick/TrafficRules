@@ -35,6 +35,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/InspectorDPS.unity
     guid: 7aa565a63df7f1b4c8cfd7f3f395a54b
+  - enabled: 1
+    path: Assets/Scenes/TramCastrat.unity
+    guid: 3c9ae396f088c404f82a80663e2bf7c2
+  - enabled: 1
+    path: Assets/Scenes/TramInteractive.unity
+    guid: 281b49190b6710e4e833dfdeabaa358c
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 6802685daf2dde44ba84f8d126f90b35,
       type: 2}

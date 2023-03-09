@@ -18,7 +18,6 @@ public class WatchCross : Watcher
     {
         base.Start();
         di = DI.instance;
-        di.tooltip.ChangeTooltipText("Перед переходом через переход обязательно нужно посмотреть по сторонам.");
     }
 
     protected override bool OtherPeopleCanGo()
@@ -32,7 +31,6 @@ public class WatchCross : Watcher
 
     protected override void SemaphoreWarningOn()
     {
-        di.tooltip.ChangeTooltipText("Перед переходом через переход обязательно нужно посмотреть по сторонам.");
         dieZone.SetActive(true);
     }
 }
