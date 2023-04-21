@@ -41,6 +41,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TramInteractive.unity
     guid: 281b49190b6710e4e833dfdeabaa358c
+  - enabled: 1
+    path: Assets/Scenes/TramPerekrestok.unity
+    guid: 7e24ae92a5e823a4496b6e7a5e96ebd5
+  - enabled: 1
+    path: Assets/Scenes/TramTrotuarInteractive.unity
+    guid: e808177db708fef4da4b1508f31e6618
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 6802685daf2dde44ba84f8d126f90b35,
       type: 2}

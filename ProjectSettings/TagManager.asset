@@ -10,6 +10,7 @@ TagManager:
   - Zone
   - Bicycle
   - CyclePoint
+  - Tram
   layers:
   - Default
   - TransparentFX

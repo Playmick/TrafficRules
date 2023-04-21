@@ -37,7 +37,7 @@ public class Quest : MonoBehaviour
         if (auDictor == null) auDictor = gameObject.AddComponent<AudioSource>();
         auDictor.volume = 0.8f;
 
-        CurrentNumberStep = 0;
+        CurrentNumberStep = testStep;
         StartFirstStep();
     }
 
@@ -45,6 +45,23 @@ public class Quest : MonoBehaviour
     {
         if (steps.Length > 0)
         {
+            for (int i = 0; i < steps.Length; i++) // Цикл по всем элементам массива Step
+            {
+                if (steps[i].shouldBeCompleted != null) // Если список не null
+                {
+                    List<Interactive> interactiveObjects = steps[i].shouldBeCompleted; // Получаем ссылку на список объектов shouldBeCompleted из текущего элемента
+
+                    if (interactiveObjects.Count > 0) // Если список не пуст
+                    {
+                        foreach (Interactive interactiveObject in interactiveObjects) // Цикл по всем объектам списка
+                        {
+                            interactiveObject.enabled = false; // Устанавливаем enabled в false
+                        }
+                    }
+                }
+                
+            }
+
             eventBeforeStartSteps?.Invoke();
             DictorSoundOn();
             steps[CurrentNumberStep].StartStep();
@@ -201,7 +218,7 @@ public class Step
 
     [Space]
     [Tooltip("Объекты, которые должны быть выполнеными для продолжения сценария")]
-    [SerializeField] private List<Interactive> shouldBeCompleted;
+    public List<Interactive> shouldBeCompleted;
 
     [Space]
     [Tooltip("Переход к следующему шагу будет по клику на кнопку")]
@@ -219,6 +236,17 @@ public class Step
     //по хорошему тут должен быть конструктор, но я не знаю когда он вызывается
     public void StartStep()
     {
+        if (shouldBeCompleted != null) // если список не null
+        {
+            if (shouldBeCompleted.Count > 0) // если список не пуст
+            {
+                foreach (Interactive interactiveObject in shouldBeCompleted) // цикл по всем объектам списка
+                {
+                    interactiveObject.enabled = true; // устанавливаем enabled в true
+                }
+            }
+        }
+
         //если подсказка не как предыдущая
         if (!likePrevious)
         {
@@ -236,6 +264,7 @@ public class Step
         
         if(shouldBeCompleted.Count>0)
         {
+
             RemainingActions = shouldBeCompleted.Count;
 
             //подписываем метод OneActionHasCompleted на все события CompleteAction из массива shouldBeCompleted
